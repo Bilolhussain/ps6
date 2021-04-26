@@ -14,8 +14,16 @@ list has a cycle. You may want a recursive helper function. Don't
 worry about space usage.
 ......................................................................*)
                                       
-let has_cycle (lst : 'a mlist) : bool =
-  failwith "has_cycle not implemented"
+let has_cycle (ls: 'a mlist) : bool = 
+  let rec check (ls1: 'a mlist) (ls2: 'a mlist) (ls2_ref: ('a mlist) ref) : bool =
+    (match ls1 with 
+     |Nil -> false
+     |Cons (_, tl) -> if (!tl == Nil) then false else
+           (match !tl with
+            |Cons (_, y_ls) -> 
+                if ((y_ls != Nil) && (ls2_ref == y_ls)) then true
+                else check tl ls2 (!y_ls || has_cycle ls2)) in
+  check ls ls (ref ls);;
 
 (*......................................................................
 Problem 2: Write a function flatten that flattens a list (removes its
