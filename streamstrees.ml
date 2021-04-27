@@ -121,14 +121,18 @@ Problem 8: Implementing infinite trees
 node t -- Returns the element of type 'a stored at the root node of
 tree t of type 'a tree.
 ......................................................................*)
+
+
 let node (t : 'a tree) : 'a =
-  failwith "node not implemented" ;;
+   match t with 
+  | Node (a, _) -> Node a;;;;
 
 (*......................................................................
 children t -- Returns the list of children of the root node of tree t.
 ......................................................................*)
 let children (t : 'a tree) : 'a tree list =
-  failwith "children not implemented" ;;
+  match t with
+  | Node (a, ls : 'a tree list = [l_t, r_t]) -> ls ;;
 
 (*......................................................................
 print_depth n indent t -- Prints a representation of the first n
@@ -143,7 +147,10 @@ tmap f t -- Returns a tree obtained by mapping the function f over
 each node in t.
 ......................................................................*)
 let rec tmap (f : 'a -> 'b) (t : 'a tree) : 'b tree =
-  failwith "tmap not implemented" ;;
+  match t with
+  | Node (r, ls = []) -> f r
+  | Node (r', ls = [l_c = {Node (_, _)}, r_c = {Node (_, _)}]) -> Node (f r', [tmap f l_c::tmap f r_c])
+  ;;
 
 (*......................................................................
 tmap2 f t1 t2 -- Returns the tree obtained by applying the function f
@@ -153,7 +160,13 @@ to corresponding nodes in t1 and t2, which must have the same
 let rec tmap2 (f : 'a -> 'b -> 'c)
               (t1 : 'a tree) (t2 : 'b tree)
             : 'c tree =
-  failwith "tmap2 not implemented" ;;
+   match t1, t2 with
+  | Node (r, ls = [t_lc! = [] || Null ;_), Node (r', ls = [t_lc' = []; _]) -> Invalid _argument
+  | Node (r, ls = [_;  t_rc = []]), Node (r', ls = [_; t_rc' != []]) -> Invalid_argument
+  | Node (r, ls = [t_lc != []; t_rc != []]), Node (r', ls' = [t_lc'!= [], t_rc' != []]) 
+    ->
+      Node (Node (lazy (f r),[lazy (f tl_c);lazy (f t_rc)], [tmap2 f tl_c; tmap2 f t_rc] 
+         
 
 (*......................................................................
 bfenumerate tslist -- Returns a LazyStreams.stream of the nodes in the
