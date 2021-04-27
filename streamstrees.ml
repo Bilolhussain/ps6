@@ -45,7 +45,8 @@ the input stream. For example:
 ......................................................................*)
   
 let average (s : float stream) : float stream =
-  failwith "average not implemented" ;;
+  match s with 
+  | Cons (hd, Cons(hd2, tl) -> lazy Cons (((hd +. hd2) /. 2.), average tl)
 
 (* Now instead of using the stream of approximations in pi_sums, you
 can instead use the stream of averaged pi_sums, which converges much
