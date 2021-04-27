@@ -64,7 +64,16 @@ use it to generate approximations of pi.
 ......................................................................*)
    
 let aitken (s: float stream) : float stream =
-  failwith "aitken not implemented" ;;
+  match s with
+  |Nil -> ()
+  |Cons (hd, tl) ->  let s1 = head s in
+                     let s2 = head (tail s) in 
+                     let s3 = head (tail (tail s)) in
+                     let rtn_stream x x1 x2 x3 : float stream =
+                        x1 -. ((x2 -. x3) ** 2.) /. (x2 -. 2. * x3 +. x3)
+                        in 
+                        y = rtn_stream s s1 s2 s3 in
+                        lazy (Cons (y, aitken tl)));;
 
 (*......................................................................
 Problem 7: Testing the acceleration
