@@ -52,6 +52,47 @@ let has_cycle (ls: 'a mlist) : bool =
                 if ((y_ls != Nil) && (ls2_ref == y_ls)) then true
                 else check tl ls2 (!y_ls || has_cycle ls2)) in
   check ls ls (ref ls);;
+  
+  OR
+  
+  let rtn_cycle mlst = 
+    let rec find_cycle mls ls =
+        (match mls with 
+        | Nil -> None
+        | Cons (_, tl) ->
+            match !tl with 
+            | Nil -> None
+            | Cons (_, xd) -> if (xd==Nil) then None
+            | Cons (_, y_ls) -> 
+            if mls == y_ls then Some tl
+            else (find_cycle tl (mls))) in
+    find_cycle mlst mlst;;
+
+let has_cycle (ls: 'a mlist) : bool =  
+    match ls with 
+    | Nil -> false
+    | Cons (_, rt) -> if (find_cycle !ls ls = None) then false else true
+
+let flatten (lst: 'a mlist)  : unit =
+    match lst with 
+    | Nil -> false
+    | Cons (_, tail) -> if (has_cycle tail) then 
+    match rtn_cycle lst lst with
+    | None -> ()
+    | Some t -> t:= Nil
+
+let rec helper_length mlst n  = 
+    match mlst with 
+    | Nil -> n
+    | Cons (_, tail) -> 
+        match !tail with
+        | Nil -> n+1
+        | Cons (_, rest) -> 
+            match !rest with
+            | Nil -> n+2
+            | Cons (_, rest') -> 
+                    if !rest' == Nil then n+2 else
+                    helper_length rest n+2;;
 
 (*......................................................................
 Problem 2: Write a function flatten that flattens a list (removes its
