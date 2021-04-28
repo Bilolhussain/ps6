@@ -204,7 +204,18 @@ argument n. For example:
 - : unit = ()
 ......................................................................*)
 let rec levels (n : int) : int tree =
-  failwith "levels not implemented" ;;
+  let rec loop ln_times n () =
+      if (ln_times == 0) then 
+        !l := !l + 1 in 
+        (Node (n+1, lazy loop l*l l))
+      else 
+        !ln_times = !ln_times - 1 in 
+        Node(n, lazy [loop !ln_times l])
+      in
+  let l := !n in
+  if (n==0) then Node (0, lazy [loop 1 1])
+  else 
+  loop l*l l;
 
 (*......................................................................
 Define an infinite binary tree tree_nats where the value of each node in
