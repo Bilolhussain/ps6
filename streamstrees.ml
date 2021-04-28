@@ -140,6 +140,27 @@ levels of the tree t indented indent spaces. You can see some examples
 of the intended output of print_depth below.
 ......................................................................*)
 let rec print_depth (n : int) (indent : int) (t : int tree) : unit =
+  let rec helper (n: int) (indent: int) (t: int tree) : unit  = 
+    let output = node t in 
+    let spaces = !indent in 
+    let no_spaces := ref 0 in 
+    let sp = " " in
+    let printf = print ("%s" sp) in 
+    let printl = print ("%a\n%..." output) in 
+    match children t with
+    | ls = [lc == Nil, rc == Nil]  -> print ("%a\n%..." output)
+    | ls = [lc, rc] -> 
+        let s = "" in 
+        let rec loop spaces str = 
+          if (!spaces !== 0) then 
+            loop (spaces-1) (s^print(lazy printf)) 
+          else if (!space == 0) then
+            lazy printl 
+        in
+        loop indent s 
+  in 
+  print (helper n indent lc, helper n indent rc);;
+                
   failwith "print_depth not implemented" ;;
 
 (*......................................................................
@@ -176,7 +197,11 @@ forth. There is an example of bfenumerate being applied below.
 ......................................................................
  *)
 let rec bfenumerate (tslist : 'a tree list) : 'a stream =
-  failwith "bfenumerate not implemented" ;;
+  match tslist with 
+  | Node (r, ls = (fst == Nil, tl == Nil) ) -> lazy Cons (r, [])
+  | Node (r, ls = (fst != Nil, tl == Nil) ) -> lazy Cons (r, lazy (Cons((bfenumerate fst), Nil)))
+  | Node (r, ls = (fst == Nil, tl != Nil) ) -> lazy Cons (r, Cons (Nil, lazy (bfenumerate tl))
+  | Node (r, ls=[fst, tl]) -> lazy Cons (r, Cons (lazy (bfenumerate fst), lazy (bfenumerate tl)) ;;
 
 (* Now use your implementation to generate some interesting infinite
 trees.  Hint: Drawing a tree considering how the values change along
@@ -186,7 +211,7 @@ each branch will yield helpful intuition for the next problems. *)
 onest -- An infinite binary tree all of whose nodes hold the integer 1.
 ......................................................................*)
 let rec onest : int tree =
-  lazy (failwith "onest not implemented") ;;
+  Node (1, [onest, onest]);; ;;
 
 (*......................................................................
 levels n -- Returns an infinite binary tree where the value of each
@@ -215,7 +240,7 @@ let rec levels (n : int) : int tree =
   let l := !n in
   if (n==0) then Node (0, lazy [loop 1 1])
   else 
-  loop l*l l;
+  lazy loop l*l l;
 
 (*......................................................................
 Define an infinite binary tree tree_nats where the value of each node in
@@ -235,7 +260,12 @@ with 0. For example:
 - : int list = [0; 1; 2; 3; 4; 5; 6; 7; 8; 9]
 ......................................................................*)
 let rec tree_nats : int tree =
-  lazy (failwith "tree_nats not implemented") ;;
+  let rec loop (t: int stream) () =
+    let r = node t in
+    match t with 
+    | Node (r, children t)
+    | Node (r, [lc, rc]) -> Node (0, (lazy (loop (mapt (fun x -> x * 2) lc )))::(lazy loop (mapt (fun x -> ((x * 2) + 1)) rc ))) in
+  loop nats
                                                  
 (*======================================================================
 Time estimate
