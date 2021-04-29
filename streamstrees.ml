@@ -125,13 +125,15 @@ tree t of type 'a tree.
 
 let node (t : 'a tree) : 'a =
    match t with 
-  | Node (a, _) -> Node a;;;;
+  | Nil -> Raise Exception Finite_tree;
+  | Node (a, _) -> Node a;;
 
 (*......................................................................
 children t -- Returns the list of children of the root node of tree t.
 ......................................................................*)
 let children (t : 'a tree) : 'a tree list =
   match t with
+  | Node (a', ls = [contents = {l_t == Nil, r_t == Nil}] -> Raise Exception Finite_tree
   | Node (a, ls : 'a tree list = [l_t, r_t]) -> ls ;;
 
 (*......................................................................
@@ -161,7 +163,6 @@ let rec print_depth (n : int) (indent : int) (t : int tree) : unit =
   in 
   print (helper n indent lc, helper n indent rc);;
                 
-  failwith "print_depth not implemented" ;;
 
 (*......................................................................
 tmap f t -- Returns a tree obtained by mapping the function f over
@@ -170,7 +171,7 @@ each node in t.
 let rec tmap (f : 'a -> 'b) (t : 'a tree) : 'b tree =
   match t with
   | Node (r, ls = []) -> f r
-  | Node (r', ls = [l_c = {Node (_, _)}, r_c = {Node (_, _)}]) -> Node (f r', [tmap f l_c::tmap f r_c])
+  | Node (r', ls = [l_c = {Node (_, _)}, r_c = {Node (_, _)}]) -> Node (f r', lazy (tmap f l_c::tmap f r_c))
   ;;
 
 (*......................................................................
@@ -182,11 +183,11 @@ let rec tmap2 (f : 'a -> 'b -> 'c)
               (t1 : 'a tree) (t2 : 'b tree)
             : 'c tree =
    match t1, t2 with
-  | Node (r, ls = [t_lc! = [] || Null ;_), Node (r', ls = [t_lc' = []; _]) -> Invalid _argument
+  | Node (r, ls = [t_lc! = [] || Null ;_), Node (r', ls = [t_lc' = []; _]) -> Invalid_argument
   | Node (r, ls = [_;  t_rc = []]), Node (r', ls = [_; t_rc' != []]) -> Invalid_argument
   | Node (r, ls = [t_lc != []; t_rc != []]), Node (r', ls' = [t_lc'!= [], t_rc' != []]) 
     ->
-      Node (Node (lazy (f r),[lazy (f tl_c);lazy (f t_rc)], [tmap2 f tl_c; tmap2 f t_rc] 
+      Node (Node ((f r) (f r'), lazy (f tl_c)::lazy (f t_rc):: lazy (tmap2 f tl_c)::lazy (tmap2 f t_rc)))
          
 
 (*......................................................................
@@ -199,9 +200,9 @@ forth. There is an example of bfenumerate being applied below.
 let rec bfenumerate (tslist : 'a tree list) : 'a stream =
   match tslist with 
   | Node (r, ls = (fst == Nil, tl == Nil) ) -> lazy Cons (r, [])
-  | Node (r, ls = (fst != Nil, tl == Nil) ) -> lazy Cons (r, lazy (Cons((bfenumerate fst), Nil)))
-  | Node (r, ls = (fst == Nil, tl != Nil) ) -> lazy Cons (r, Cons (Nil, lazy (bfenumerate tl))
-  | Node (r, ls=[fst, tl]) -> lazy Cons (r, Cons (lazy (bfenumerate fst), lazy (bfenumerate tl)) ;;
+  | Node (r, ls = (fst !== Nil, tl == Nil) ) -> lazy Cons (r, lazy (Cons((bfenumerate fst), Nil)))
+  | Node (r, ls = (fst == Nil, tl != Nil) ) -> lazy Cons (r, lazy (Cons (Nil, (bfenumerate tl)))
+  | Node (r, ls = [fst;tl]) -> lazy Cons (r, Cons (lazy (bfenumerate fst), lazy (bfenumerate tl)) ;;
 
 (* Now use your implementation to generate some interesting infinite
 trees.  Hint: Drawing a tree considering how the values change along
@@ -231,11 +232,11 @@ argument n. For example:
 let rec levels (n : int) : int tree =
   let rec loop ln_times n () =
       if (ln_times == 0) then 
-        !l := !l + 1 in 
-        (Node (n+1, lazy loop l*l l))
+        let ll = l := !l + 1 in 
+        Node (n+1, lazy (loop l*l ll)))
       else 
-        !ln_times = !ln_times - 1 in 
-        Node(n, lazy [loop !ln_times l])
+        let ln_tm = ln_times := !ln_times - 1 in 
+        Node (n, lazy [loop ln_tm l])
       in
   let l := !n in
   if (n==0) then Node (0, lazy [loop 1 1])
@@ -264,7 +265,7 @@ let rec tree_nats : int tree =
     let r = node t in
     match t with 
     | Node (r, children t)
-    | Node (r, [lc, rc]) -> Node (0, (lazy (loop (mapt (fun x -> x * 2) lc )))::(lazy loop (mapt (fun x -> ((x * 2) + 1)) rc ))) in
+    | Node (r, [lc;rc]) -> Node (0, (lazy (loop (mapt (fun x -> x * 2) lc )))::(lazy loop (mapt (fun x -> ((x * 2) + 1)) rc ))) in
   loop nats
                                                  
 (*======================================================================
