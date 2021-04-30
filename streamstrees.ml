@@ -48,6 +48,17 @@ let average (s : float stream) : float stream =
   match s with 
   | Cons (hd, Cons(hd2, tl) -> lazy Cons (((hd +. hd2) /. 2.), average tl)
 
+let rec helper head headtail = 
+  head +. headtail /. 2.
+  
+let rec average (s : float stream) : float stream = 
+  lazy Cons( (helper (head s) (head (tail s))), (average (tail (tail s))));;
+  
+let rec average (s : float stream) : float stream = 
+  lazy (Cons (helper (head s) (head (tail s)), average (tail(tail(s)) ) )) 
+
+ 
+
 (* Now instead of using the stream of approximations in pi_sums, you
 can instead use the stream of averaged pi_sums, which converges much
 more quickly. Test that it requires far fewer steps to get within,
