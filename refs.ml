@@ -14,23 +14,23 @@ list has a cycle. You may want a recursive helper function. Don't
 worry about space usage.
 ......................................................................*)
 
-let rtn_cycle lst = 
-  let rec find_cycle mls =
-    (match mls with 
-     | Nil -> None
-     | Cons (_, tl) ->
-         match !tl with 
-         | Nil -> None
-         | Cons (_, y_ls) -> 
-             if mls == !y_ls then Some tl
-             else (find_cycle !tl) in
-  find_cycle !lst 
-
+let rec rtn_cycle (lst) (ls_copy) = 
+  match lst with 
+  | Nil -> None
+  | Cons (_, tl) ->
+      match !tl with 
+      | Nil -> None
+      | Cons (_, y_ls) -> 
+          let rec find_cycle (y_ref) (ls_cpy) =
+            if List.exists (fun x -> x == y_ref) ls_cpy then Some tl
+            else (rtn_cycle (!tl) (tl::ls_cpy)) 
+          in find_cycle y_ls ls_copy;;
+  
 
 let has_cycle (ls: 'a mlist) : bool =  
   match ls with 
   | Nil -> false
-  | Cons (_, rt) -> if ((rtn_cycle (ref ls)) == None) then false else true
+  | Cons (_, _) -> if ((rtn_cycle (ls) ([ref ls])) == None) then false else true
 
 (*......................................................................
 Problem 2: Write a function flatten that flattens a list (removes its
