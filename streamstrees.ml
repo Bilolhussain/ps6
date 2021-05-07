@@ -44,19 +44,17 @@ the input stream. For example:
 - : float list = [0.5; 1.5; 2.5; 3.5; 4.5]
 ......................................................................*)
   
-let average (s : float stream) : float stream =
+(*let average (s : float stream) : float stream =
   match s with 
-  | Cons (hd, Cons(hd2, tl) -> lazy Cons (((hd +. hd2) /. 2.), average tl)
+  | Nil -> Non
+  | Cons (hd, tl) -> lazy Cons (((hd +. hd2) /. 2.), average tl)*)
 
 let rec helper head headtail = 
   head +. headtail /. 2.
   
 let rec average (s : float stream) : float stream = 
-  lazy Cons( (helper (head s) (head (tail s))), (average (tail (tail s))));;
+  lazy (Cons (helper (head s) (head (tail s)), average (tail(tail(s)) ) )) ;;
   
-let rec average (s : float stream) : float stream = 
-  lazy (Cons (helper (head s) (head (tail s)), average (tail(tail(s)) ) )) 
-
  
 
 (* Now instead of using the stream of approximations in pi_sums, you
