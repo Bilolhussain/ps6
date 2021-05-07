@@ -55,7 +55,8 @@ let rec helper head headtail =
 let rec average (s : float stream) : float stream = 
   lazy (Cons (helper (head s) (head (tail s)), average (tail(tail(s)) ) )) ;;
   
- 
+let av_stream = average (pi_stream) in 
+first 10 av_stream;;
 
 (* Now instead of using the stream of approximations in pi_sums, you
 can instead use the stream of averaged pi_sums, which converges much
