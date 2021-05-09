@@ -44,19 +44,22 @@ the input stream. For example:
 - : float list = [0.5; 1.5; 2.5; 3.5; 4.5]
 ......................................................................*)
   
-(*let average (s : float stream) : float stream =
-  match s with 
-  | Nil -> Non
-  | Cons (hd, tl) -> lazy Cons (((hd +. hd2) /. 2.), average tl)*)
-
 let rec helper head headtail = 
-  head +. headtail /. 2.
+  ((head +. headtail) /. 2.)
   
 let rec average (s : float stream) : float stream = 
-  lazy (Cons (helper (head s) (head (tail s)), average (tail(tail(s)) ) )) ;;
-  
+  lazy (Cons ( helper (head s) (head (tail s)) , average (tail s)) ) ;;
+ 
+(* 
 let av_stream = average (pi_stream) in 
 first 10 av_stream;;
+
+let av_stream2 = average (to_float(odds)) in 
+first 10 av_stream2;;
+
+let av_stream3 = average (to_float(nats)) in 
+first 10 av_stream3;;
+*)
 
 (* Now instead of using the stream of approximations in pi_sums, you
 can instead use the stream of averaged pi_sums, which converges much
@@ -72,21 +75,23 @@ is Aitken's method. The formula is given in the problem set
 writeup. Write a function to apply this accelerator to a stream, and
 use it to generate approximations of pi.
 ......................................................................*)
-   
-let rec aitken (s: float stream) : float stream = 
-  if s == 0. then 0. 
-  else 
-    let s1 = head (s) in
-    let s2 = head (tail(s)) in 
-    let s3 = head (tail (tail(s))) in
-    let rtn_stream x x1 x2 x3 : float =
-      (x1 -. ((x2 -. x3) ** 2.)) /. (x2 -. 2.0 *. x3 +. x3)
-    in 
-    let y = rtn_stream s s1 s2 s3 in
-    lazy (Cons (y, lazy (aitken (tail(s))) ));;
 
+let rec aitken (s: float stream) : float stream =
+  let s1 = head (s) in
+  let s2 = head (tail(s)) in 
+  let s3 = head (tail (tail(s))) in
+  let rtn_stream x x1 x2 x3 : float =
+    (x1 -. ((x2 -. x3) ** 2.)) /. (x2 -. 2.0 *. x3 +. x3)
+  in 
+  let y = rtn_stream s s1 s2 s3 in
+  lazy (Cons (y, (aitken (tail(s))) ));;
+
+(*
 let ait_str = aitken (pi_stream) in 
-first(5, ait_str);;
+first 5 ait_str
+;;
+let ait_stream2 = aitken (to_float(nats)) in 
+first 10 ait_stream2;;*)
 (*......................................................................
 Problem 7: Testing the acceleration
 
