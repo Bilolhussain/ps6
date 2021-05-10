@@ -163,6 +163,28 @@ print_depth n indent t -- Prints a representation of the first n
 levels of the tree t indented indent spaces. You can see some examples
 of the intended output of print_depth below.
 ......................................................................*)
+(*
+          let rec print_depth (n : int) (indent : int) (t : int tree) : 'a * 'b =
+            let rec helper (n: int) (indent: int) (t: int tree) : unit  = 
+              let output = node t in 
+              let spaces = indent in 
+              let sp = " " in
+              let printf = printf ("%s" sp) in 
+              let printl = printf ("%a\n%..." output) in 
+              match (Lazy.force children t) with
+              | []  -> print ("%a\n%..." output)
+              | [lc, rc] -> 
+                  let s = "" in 
+                  let rec loop spaces str = 
+                    if (spaces != 0) then 
+                      loop (spaces-1) (s^print(lazy printf)) 
+                    else if (space == 0) then
+                      printl 
+                  in
+                  loop indent s 
+            in 
+            (helper n indent lc, helper n indent rc);;
+*)
 let rec print_depth (n : int) (indent : int) (t : int tree) : unit =
   let rec helper (n: int) (indent: int) (t: int tree) : unit  = 
     let output = node t in 
@@ -195,6 +217,18 @@ let rec tmap (f : 'a -> 'b) (t : 'a tree) : 'b tree =
   | Node (r, ls = []) -> f r
   | Node (r', ls = [l_c = {Node (_, _)}, r_c = {Node (_, _)}]) -> Node (f r', lazy (tmap f l_c::tmap f r_c))
   ;;
+  (*
+  let rec tmap (f : 'a -> 'b) (t : 'a tree) : 'b tree =
+  match Lazy.force t with 
+  | Node (r', [l_c; r_c]) ->
+      let Node (rootl, [_]) = Lazy.force l_c in 
+      let Node (rootr, [_]) = Lazy.force r_c in 
+      if (rootr != None && rootl != None) then 
+        Node ((f r'), [tmap f l_c;tmap f r_c])
+      else
+        Node (f r', []);;
+
+  *)
 
 (*......................................................................
 tmap2 f t1 t2 -- Returns the tree obtained by applying the function f
