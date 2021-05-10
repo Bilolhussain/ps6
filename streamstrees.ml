@@ -156,8 +156,7 @@ let children (t : 'a tree) : 'a tree list =
       let Node (rootl, [_]) = Lazy.force l_c in 
       let Node (rootr, [_]) = Lazy.force r_c in 
       if (rootr != None || rootl != None) 
-      then []
-      else [l_c; r_c] ;;
+      then [l_c; r_c] else [];;
 
 (*......................................................................
 print_depth n indent t -- Prints a representation of the first n
