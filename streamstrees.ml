@@ -141,9 +141,11 @@ tree t of type 'a tree.
 
 
 let node (t : 'a tree) : 'a =
-   match t with 
-  | Nil -> Raise Exception Finite_tree;
-  | Node (a, _) -> Node a;;
+  match Lazy.force t with
+  |Node (a, _::_::_::_) 
+  |Node (a, _::[]) 
+  |Node (a, [])
+  | Node (a, [_;_])  -> a;;
 
 (*......................................................................
 children t -- Returns the list of children of the root node of tree t.
