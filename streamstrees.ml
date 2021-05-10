@@ -151,9 +151,13 @@ let node (t : 'a tree) : 'a =
 children t -- Returns the list of children of the root node of tree t.
 ......................................................................*)
 let children (t : 'a tree) : 'a tree list =
-  match t with
-  | Node (a', ls = [contents = {l_t == Nil, r_t == Nil}] -> Raise Exception Finite_tree
-  | Node (a, ls : 'a tree list = [l_t, r_t]) -> ls ;;
+  match Lazy.force t with
+  | Node (_, [l_c; r_c]) -> 
+      let Node (rootl, [_]) = Lazy.force l_c in 
+      let Node (rootr, [_]) = Lazy.force r_c in 
+      if (rootr != None || rootl != None) 
+      then []
+      else [l_c; r_c] ;;
 
 (*......................................................................
 print_depth n indent t -- Prints a representation of the first n
